@@ -1,10 +1,10 @@
 {
   "globals": {
-    "appName": "fullstack-amplify-cdk-next",
+    "appName": "appsync-amplify-cdk-next",
     "hosting": {
       "ghTokenName": "github-token",
       "ghOwner": "thangtran3112",
-      "repo": "fullstack-amplify-cdk-next"
+      "repo": "appsync-amplify-cdk-next"
     }
   },
   "main": {
