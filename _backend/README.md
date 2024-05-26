@@ -70,3 +70,4 @@ cd _backend && npm i && cd .. && npm i
 ## References
 
 - [youtube video](https://www.youtube.com/watch?v=6-Z7xJCp-Zw&t=423s) that covers most of this in a separate app!
+- [Github token video](https://www.youtube.com/watch?v=bnj49fVT4ko)
