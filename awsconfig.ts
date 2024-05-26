@@ -1,6 +1,6 @@
 import cdkoutput from "./_backend/output.json";
 
-const output = cdkoutput["appsync-amplify-cdk-next-Stack"];
+const output = cdkoutput["appsync-amplify-cdk-next-dev-Stack"];
 
 export const config = {
   Auth: {
