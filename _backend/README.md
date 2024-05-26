@@ -18,9 +18,10 @@ The frontend stack is comprised of the following main pieces:
 cd _backend && npm i && cd .. && npm i
 ```
 
-2. **Update the `cdk.context.json` values**: Probably the most important step. These values need to correspond to your project details. Note that if you change the appName, you'll also want to change the `awsconfig.ts` frontend file to match as well. It follows an `${appName}-${stage}-Stack` convention. Also the value for `ghTokenName` is the name of the key stored in AWS Secrets Manager.
-3. Checkout to your `dev` branch.
-4. Push a commit to GitHub and check the build in the Amplify Hosting console.
+2. **Update the `cdk.context.json` values**: Probably the most important step. These values need to correspond to your project details.
+3. Note that if you change the appName, you'll also want to change the `awsconfig.ts` frontend file to match as well. It follows an `${appName}-${stage}-Stack` convention. Also the value for `ghTokenName` is the name of the key stored in AWS Secrets Manager.
+4. When deployment directly with `cdk`, you must use either `main` or `dev` branches
+5. Push a commit to GitHub and check the build in the Amplify Hosting console.
 
 ### The Backend Stack
 
