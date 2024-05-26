@@ -1,0 +1,809 @@
+{
+ "Resources": {
+  "appsyncamplifycdknextproduserpool459BB37C": {
+   "Type": "AWS::Cognito::UserPool",
+   "Properties": {
+    "AdminCreateUserConfig": {
+     "AllowAdminCreateUserOnly": false
+    },
+    "AutoVerifiedAttributes": [
+     "email"
+    ],
+    "EmailVerificationMessage": "The verification code to your new account is {####}",
+    "EmailVerificationSubject": "Verify your new account",
+    "Schema": [
+     {
+      "Mutable": true,
+      "Name": "email",
+      "Required": true
+     }
+    ],
+    "SmsVerificationMessage": "The verification code to your new account is {####}",
+    "UserPoolName": "appsync-amplify-cdk-next-prod-userpool",
+    "VerificationMessageTemplate": {
+     "DefaultEmailOption": "CONFIRM_WITH_CODE",
+     "EmailMessage": "The verification code to your new account is {####}",
+     "EmailSubject": "Verify your new account",
+     "SmsMessage": "The verification code to your new account is {####}"
+    }
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "appsync-amplify-cdk-next-prod-Stack/appsync-amplify-cdk-next-prod-userpool/Resource"
+   }
+  },
+  "appsyncamplifycdknextproduserpoolClientE3A5C5D1": {
+   "Type": "AWS::Cognito::UserPoolClient",
+   "Properties": {
+    "AllowedOAuthFlows": [
+     "implicit",
+     "code"
+    ],
+    "AllowedOAuthFlowsUserPoolClient": true,
+    "AllowedOAuthScopes": [
+     "profile",
+     "phone",
+     "email",
+     "openid",
+     "aws.cognito.signin.user.admin"
+    ],
+    "CallbackURLs": [
+     "https://example.com"
+    ],
+    "SupportedIdentityProviders": [
+     "COGNITO"
+    ],
+    "UserPoolId": {
+     "Ref": "appsyncamplifycdknextproduserpool459BB37C"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "appsync-amplify-cdk-next-prod-Stack/appsync-amplify-cdk-next-prod-userpoolClient/Resource"
+   }
+  },
+  "appsyncamplifycdknextprodidentityPool77099B93": {
+   "Type": "AWS::Cognito::IdentityPool",
+   "Properties": {
+    "AllowUnauthenticatedIdentities": true,
+    "CognitoIdentityProviders": [
+     {
+      "ClientId": {
+       "Ref": "appsyncamplifycdknextproduserpoolClientE3A5C5D1"
+      },
+      "ProviderName": {
+       "Fn::Join": [
+        "",
+        [
+         "cognito-idp.us-east-1.",
+         {
+          "Ref": "AWS::URLSuffix"
+         },
+         "/",
+         {
+          "Ref": "appsyncamplifycdknextproduserpool459BB37C"
+         }
+        ]
+       ]
+      },
+      "ServerSideTokenCheck": true
+     }
+    ],
+    "IdentityPoolName": "appsync-amplify-cdk-next-prod-identityPool"
+   },
+   "DependsOn": [
+    "appsyncamplifycdknextproduserpool459BB37C",
+    "appsyncamplifycdknextproduserpoolClientE3A5C5D1"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "appsync-amplify-cdk-next-prod-Stack/appsync-amplify-cdk-next-prod-identityPool/Resource"
+   }
+  },
+  "appsyncamplifycdknextprodidentityPoolAuthenticatedRoleB6FE0CD9": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRoleWithWebIdentity",
+       "Condition": {
+        "StringEquals": {
+         "cognito-identity.amazonaws.com:aud": {
+          "Ref": "appsyncamplifycdknextprodidentityPool77099B93"
+         }
+        },
+        "ForAnyValue:StringLike": {
+         "cognito-identity.amazonaws.com:amr": "authenticated"
+        }
+       },
+       "Effect": "Allow",
+       "Principal": {
+        "Federated": "cognito-identity.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Description": {
+     "Fn::Join": [
+      "",
+      [
+       "Default Authenticated Role for Identity Pool ",
+       {
+        "Fn::GetAtt": [
+         "appsyncamplifycdknextprodidentityPool77099B93",
+         "Name"
+        ]
+       }
+      ]
+     ]
+    }
+   },
+   "DependsOn": [
+    "appsyncamplifycdknextproduserpool459BB37C",
+    "appsyncamplifycdknextproduserpoolClientE3A5C5D1"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "appsync-amplify-cdk-next-prod-Stack/appsync-amplify-cdk-next-prod-identityPool/AuthenticatedRole/Resource"
+   }
+  },
+  "appsyncamplifycdknextprodidentityPoolUnauthenticatedRole20137DF0": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRoleWithWebIdentity",
+       "Condition": {
+        "StringEquals": {
+         "cognito-identity.amazonaws.com:aud": {
+          "Ref": "appsyncamplifycdknextprodidentityPool77099B93"
+         }
+        },
+        "ForAnyValue:StringLike": {
+         "cognito-identity.amazonaws.com:amr": "unauthenticated"
+        }
+       },
+       "Effect": "Allow",
+       "Principal": {
+        "Federated": "cognito-identity.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Description": {
+     "Fn::Join": [
+      "",
+      [
+       "Default Unauthenticated Role for Identity Pool ",
+       {
+        "Fn::GetAtt": [
+         "appsyncamplifycdknextprodidentityPool77099B93",
+         "Name"
+        ]
+       }
+      ]
+     ]
+    }
+   },
+   "DependsOn": [
+    "appsyncamplifycdknextproduserpool459BB37C",
+    "appsyncamplifycdknextproduserpoolClientE3A5C5D1"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "appsync-amplify-cdk-next-prod-Stack/appsync-amplify-cdk-next-prod-identityPool/UnauthenticatedRole/Resource"
+   }
+  },
+  "appsyncamplifycdknextprodidentityPoolDefaultRoleAttachment4EDEB3DE": {
+   "Type": "AWS::Cognito::IdentityPoolRoleAttachment",
+   "Properties": {
+    "IdentityPoolId": {
+     "Ref": "appsyncamplifycdknextprodidentityPool77099B93"
+    },
+    "Roles": {
+     "authenticated": {
+      "Fn::GetAtt": [
+       "appsyncamplifycdknextprodidentityPoolAuthenticatedRoleB6FE0CD9",
+       "Arn"
+      ]
+     },
+     "unauthenticated": {
+      "Fn::GetAtt": [
+       "appsyncamplifycdknextprodidentityPoolUnauthenticatedRole20137DF0",
+       "Arn"
+      ]
+     }
+    }
+   },
+   "DependsOn": [
+    "appsyncamplifycdknextproduserpool459BB37C",
+    "appsyncamplifycdknextproduserpoolClientE3A5C5D1"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "appsync-amplify-cdk-next-prod-Stack/appsync-amplify-cdk-next-prod-identityPool/DefaultRoleAttachment/Resource"
+   }
+  },
+  "appsyncamplifycdknextprodTodoTableC79CD0DA": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "id",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "__typename",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "owner",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "todosByOwner",
+      "KeySchema": [
+       {
+        "AttributeName": "__typename",
+        "KeyType": "HASH"
+       },
+       {
+        "AttributeName": "owner",
+        "KeyType": "RANGE"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "id",
+      "KeyType": "HASH"
+     }
+    ],
+    "TableName": "appsync-amplify-cdk-next-prodTodoTable"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "appsync-amplify-cdk-next-prod-Stack/appsync-amplify-cdk-next-prodTodoTable/Resource"
+   }
+  },
+  "appsyncamplifycdknextprodApiLogsRole39099732": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "appsync.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSAppSyncPushToCloudWatchLogs"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "appsync-amplify-cdk-next-prod-Stack/appsync-amplify-cdk-next-prod/ApiLogsRole/Resource"
+   }
+  },
+  "appsyncamplifycdknextprod7D817F5B": {
+   "Type": "AWS::AppSync::GraphQLApi",
+   "Properties": {
+    "AdditionalAuthenticationProviders": [
+     {
+      "AuthenticationType": "AWS_IAM"
+     }
+    ],
+    "AuthenticationType": "AMAZON_COGNITO_USER_POOLS",
+    "LogConfig": {
+     "CloudWatchLogsRoleArn": {
+      "Fn::GetAtt": [
+       "appsyncamplifycdknextprodApiLogsRole39099732",
+       "Arn"
+      ]
+     },
+     "FieldLogLevel": "ALL"
+    },
+    "Name": "appsync-amplify-cdk-next-prod",
+    "UserPoolConfig": {
+     "AwsRegion": "us-east-1",
+     "DefaultAction": "ALLOW",
+     "UserPoolId": {
+      "Ref": "appsyncamplifycdknextproduserpool459BB37C"
+     }
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "appsync-amplify-cdk-next-prod-Stack/appsync-amplify-cdk-next-prod/Resource"
+   }
+  },
+  "appsyncamplifycdknextprodSchema54E330D5": {
+   "Type": "AWS::AppSync::GraphQLSchema",
+   "Properties": {
+    "ApiId": {
+     "Fn::GetAtt": [
+      "appsyncamplifycdknextprod7D817F5B",
+      "ApiId"
+     ]
+    },
+    "Definition": "type Query {\n\tgetTodo(id: String!): Todo! @aws_cognito_user_pools\n\tlistTodos(limit: Int, nextToken: String): PaginatedTodos!\n\t\t@aws_cognito_user_pools\n}\n\ntype Mutation {\n\tcreateTodo(input: CreateTodoInput!): Todo! @aws_cognito_user_pools\n\tupdateTodo(input: UpdateTodoInput!): Todo! @aws_cognito_user_pools\n\tdeleteTodo(id: String!): Todo! @aws_cognito_user_pools\n}\n\ninput CreateTodoInput {\n\ttitle: String!\n\tdescription: String!\n\tisCompleted: Boolean!\n}\n\ninput UpdateTodoInput {\n\tid: ID!\n\ttitle: String!\n\tdescription: String!\n\tisCompleted: Boolean!\n}\n\ntype Todo {\n\tid: ID!\n\ttitle: String!\n\tdescription: String!\n\tisCompleted: Boolean!\n\towner: String!\n\tcreatedAt: AWSDateTime!\n\tupdatedAt: AWSDateTime!\n}\n\ntype PaginatedTodos {\n\ttodos: [Todo!]!\n\tnextToken: String\n}\n"
+   },
+   "Metadata": {
+    "aws:cdk:path": "appsync-amplify-cdk-next-prod-Stack/appsync-amplify-cdk-next-prod/Schema"
+   }
+  },
+  "appsyncamplifycdknextprodTodoDSServiceRoleECBDFFE8": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "appsync.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "appsync-amplify-cdk-next-prod-Stack/appsync-amplify-cdk-next-prod/TodoDS/ServiceRole/Resource"
+   }
+  },
+  "appsyncamplifycdknextprodTodoDSServiceRoleDefaultPolicy0A9EEF45": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable",
+        "dynamodb:GetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:PutItem",
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:UpdateItem"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "appsyncamplifycdknextprodTodoTableC79CD0DA",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "appsyncamplifycdknextprodTodoTableC79CD0DA",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "appsyncamplifycdknextprodTodoDSServiceRoleDefaultPolicy0A9EEF45",
+    "Roles": [
+     {
+      "Ref": "appsyncamplifycdknextprodTodoDSServiceRoleECBDFFE8"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "appsync-amplify-cdk-next-prod-Stack/appsync-amplify-cdk-next-prod/TodoDS/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "appsyncamplifycdknextprodTodoDS8FCC8734": {
+   "Type": "AWS::AppSync::DataSource",
+   "Properties": {
+    "ApiId": {
+     "Fn::GetAtt": [
+      "appsyncamplifycdknextprod7D817F5B",
+      "ApiId"
+     ]
+    },
+    "DynamoDBConfig": {
+     "AwsRegion": "us-east-1",
+     "TableName": {
+      "Ref": "appsyncamplifycdknextprodTodoTableC79CD0DA"
+     }
+    },
+    "Name": "TodoDS",
+    "ServiceRoleArn": {
+     "Fn::GetAtt": [
+      "appsyncamplifycdknextprodTodoDSServiceRoleECBDFFE8",
+      "Arn"
+     ]
+    },
+    "Type": "AMAZON_DYNAMODB"
+   },
+   "Metadata": {
+    "aws:cdk:path": "appsync-amplify-cdk-next-prod-Stack/appsync-amplify-cdk-next-prod/TodoDS/Resource"
+   }
+  },
+  "appsyncamplifycdknextprodgetTodoResolverEAC618E1": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Fn::GetAtt": [
+      "appsyncamplifycdknextprod7D817F5B",
+      "ApiId"
+     ]
+    },
+    "CodeS3Location": "s3://cdk-hnb659fds-assets-654654404647-us-east-1/1e25dd50c1a2f7a137ff4176a829d80cf40ca2053c558a9d323752120144cd94.js",
+    "DataSourceName": "TodoDS",
+    "FieldName": "getTodo",
+    "Kind": "UNIT",
+    "Runtime": {
+     "Name": "APPSYNC_JS",
+     "RuntimeVersion": "1.0.0"
+    },
+    "TypeName": "Query"
+   },
+   "DependsOn": [
+    "appsyncamplifycdknextprodSchema54E330D5",
+    "appsyncamplifycdknextprodTodoDS8FCC8734"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "appsync-amplify-cdk-next-prod-Stack/appsync-amplify-cdk-next-prod/getTodoResolver/Resource"
+   }
+  },
+  "appsyncamplifycdknextprodlistTodosResolverED029416": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Fn::GetAtt": [
+      "appsyncamplifycdknextprod7D817F5B",
+      "ApiId"
+     ]
+    },
+    "CodeS3Location": "s3://cdk-hnb659fds-assets-654654404647-us-east-1/a875ef089b944d224ffb70db0c6abdfa6572a9aa9a6721e5d1491d8fc05fad8c.js",
+    "DataSourceName": "TodoDS",
+    "FieldName": "listTodos",
+    "Kind": "UNIT",
+    "Runtime": {
+     "Name": "APPSYNC_JS",
+     "RuntimeVersion": "1.0.0"
+    },
+    "TypeName": "Query"
+   },
+   "DependsOn": [
+    "appsyncamplifycdknextprodSchema54E330D5",
+    "appsyncamplifycdknextprodTodoDS8FCC8734"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "appsync-amplify-cdk-next-prod-Stack/appsync-amplify-cdk-next-prod/listTodosResolver/Resource"
+   }
+  },
+  "appsyncamplifycdknextprodcreateTodoResolverDBB2C440": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Fn::GetAtt": [
+      "appsyncamplifycdknextprod7D817F5B",
+      "ApiId"
+     ]
+    },
+    "CodeS3Location": "s3://cdk-hnb659fds-assets-654654404647-us-east-1/6d512610e93920ab5609d77720f1987cef126e8578430241090d0fd5c6a131d4.js",
+    "DataSourceName": "TodoDS",
+    "FieldName": "createTodo",
+    "Kind": "UNIT",
+    "Runtime": {
+     "Name": "APPSYNC_JS",
+     "RuntimeVersion": "1.0.0"
+    },
+    "TypeName": "Mutation"
+   },
+   "DependsOn": [
+    "appsyncamplifycdknextprodSchema54E330D5",
+    "appsyncamplifycdknextprodTodoDS8FCC8734"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "appsync-amplify-cdk-next-prod-Stack/appsync-amplify-cdk-next-prod/createTodoResolver/Resource"
+   }
+  },
+  "appsyncamplifycdknextprodupdateTodoResolverC0A021F6": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Fn::GetAtt": [
+      "appsyncamplifycdknextprod7D817F5B",
+      "ApiId"
+     ]
+    },
+    "CodeS3Location": "s3://cdk-hnb659fds-assets-654654404647-us-east-1/a2cd48476eb5240dafa7ebb4b1988276ec86e41df99c64d2339cd5937027a7a0.js",
+    "DataSourceName": "TodoDS",
+    "FieldName": "updateTodo",
+    "Kind": "UNIT",
+    "Runtime": {
+     "Name": "APPSYNC_JS",
+     "RuntimeVersion": "1.0.0"
+    },
+    "TypeName": "Mutation"
+   },
+   "DependsOn": [
+    "appsyncamplifycdknextprodSchema54E330D5",
+    "appsyncamplifycdknextprodTodoDS8FCC8734"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "appsync-amplify-cdk-next-prod-Stack/appsync-amplify-cdk-next-prod/updateTodoResolver/Resource"
+   }
+  },
+  "appsyncamplifycdknextproddeleteTodoResolverA9F8D06C": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Fn::GetAtt": [
+      "appsyncamplifycdknextprod7D817F5B",
+      "ApiId"
+     ]
+    },
+    "CodeS3Location": "s3://cdk-hnb659fds-assets-654654404647-us-east-1/cebc13a2c198e36f5a3b84554a2932a7c099b173837a300c2299984ac1d9dfc9.js",
+    "DataSourceName": "TodoDS",
+    "FieldName": "deleteTodo",
+    "Kind": "UNIT",
+    "Runtime": {
+     "Name": "APPSYNC_JS",
+     "RuntimeVersion": "1.0.0"
+    },
+    "TypeName": "Mutation"
+   },
+   "DependsOn": [
+    "appsyncamplifycdknextprodSchema54E330D5",
+    "appsyncamplifycdknextprodTodoDS8FCC8734"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "appsync-amplify-cdk-next-prod-Stack/appsync-amplify-cdk-next-prod/deleteTodoResolver/Resource"
+   }
+  },
+  "appsyncamplifycdknextprodallowamplifydeploycdkroleB9D7BDE6": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "amplify.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Description": "Role assumed by Amplify Hosting for deploying aws cdk",
+    "MaxSessionDuration": 3600,
+    "Policies": [
+     {
+      "PolicyDocument": {
+       "Statement": [
+        {
+         "Action": "sts:AssumeRole",
+         "Effect": "Allow",
+         "Resource": "arn:aws:iam::654654404647:role/cdk-*",
+         "Sid": "0"
+        },
+        {
+         "Action": "appsync:GetIntrospectionSchema",
+         "Effect": "Allow",
+         "Resource": "*",
+         "Sid": "1"
+        }
+       ],
+       "Version": "2012-10-17"
+      },
+      "PolicyName": "CdkDeploymentPolicy"
+     }
+    ],
+    "RoleName": "appsync-amplify-cdk-next-prod-amplify-deploy-from-cdk"
+   },
+   "Metadata": {
+    "aws:cdk:path": "appsync-amplify-cdk-next-prod-Stack/appsync-amplify-cdk-next-prod-allow-amplify-deploy-cdk-role/Resource"
+   }
+  },
+  "appsyncamplifycdknextprodhosting3E234B6C": {
+   "Type": "AWS::Amplify::App",
+   "Properties": {
+    "BasicAuthConfig": {
+     "EnableBasicAuth": false
+    },
+    "BuildSpec": "version: 1\nfrontend:\n  phases:\n    preBuild:\n      commands:\n        - cd _backend\n        - npm ci\n        - npm run codegen\n        - npm run build:resolvers\n        - npx aws-cdk deploy --require-approval never --outputs-file ../output.json\n        - cd ..\n        - npm ci\n    build:\n      commands:\n        - npm run build\n  artifacts:\n    baseDirectory: .next\n    files:\n      - \"**/*\"\n  cache:\n    paths:\n      - node_modules/**/*\n",
+    "EnableBranchAutoDeletion": true,
+    "EnvironmentVariables": [
+     {
+      "Name": "_CUSTOM_IMAGE",
+      "Value": "amplify:al2023"
+     },
+     {
+      "Name": "userPoolId",
+      "Value": {
+       "Ref": "appsyncamplifycdknextproduserpool459BB37C"
+      }
+     },
+     {
+      "Name": "userPoolClientId",
+      "Value": {
+       "Ref": "appsyncamplifycdknextproduserpoolClientE3A5C5D1"
+      }
+     },
+     {
+      "Name": "identityPoolId",
+      "Value": {
+       "Ref": "appsyncamplifycdknextprodidentityPool77099B93"
+      }
+     },
+     {
+      "Name": "region",
+      "Value": "us-east-1"
+     },
+     {
+      "Name": "apiUrl",
+      "Value": {
+       "Fn::GetAtt": [
+        "appsyncamplifycdknextprod7D817F5B",
+        "GraphQLUrl"
+       ]
+      }
+     }
+    ],
+    "IAMServiceRole": {
+     "Fn::GetAtt": [
+      "appsyncamplifycdknextprodallowamplifydeploycdkroleB9D7BDE6",
+      "Arn"
+     ]
+    },
+    "Name": "appsync-amplify-cdk-next-prod",
+    "OauthToken": "{{resolve:secretsmanager:github-token:SecretString:::}}",
+    "Platform": "WEB_COMPUTE",
+    "Repository": "https://github.com/thangtran3112/appsync-amplify-cdk-next"
+   },
+   "Metadata": {
+    "aws:cdk:path": "appsync-amplify-cdk-next-prod-Stack/appsync-amplify-cdk-next-prod-hosting/Resource"
+   }
+  },
+  "appsyncamplifycdknextprodhostingmainF713D957": {
+   "Type": "AWS::Amplify::Branch",
+   "Properties": {
+    "AppId": {
+     "Fn::GetAtt": [
+      "appsyncamplifycdknextprodhosting3E234B6C",
+      "AppId"
+     ]
+    },
+    "BranchName": "main",
+    "EnableAutoBuild": true,
+    "EnablePullRequestPreview": true,
+    "Stage": "PRODUCTION"
+   },
+   "Metadata": {
+    "aws:cdk:path": "appsync-amplify-cdk-next-prod-Stack/appsync-amplify-cdk-next-prod-hosting/main/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/31Ry27CMBD8Fu7OQkDquTykqlKlUtKe0cYxxODYbrwBRZb/vbJJWrj0tDO7M+vReg55/gQ+n+DVZbw6Z0qW4AtCfmZ4dXvPzVFLMuC/nGi3xii2PuhfPIK1kkLT/eiv81oJTZL60XzPd0aJJRHyuhGaApPYgI/NKEx1a5TkfaQ3FFjVa2xMVYL/xPKmTCAwtNb1moN/adHW32ppZZwm9vH2yApeiwbZJi3blBskLEzX8rTvju2EM+oi2hRowIG5xR6dE+RgGQtzC1h1/CxohU4wbKyShx78+qCX1kbrqkXN6xDSvrQ4GQvCo9THqHjvyHY0PhMlgeUZKlsjzCbPw/9MYx0/JZPDKa0xapD6h3P/d+sh5eiLQceUgWlTCTi56WU+gzyHfHJyUmZtp0k2Ana3+gMog5wQPQIAAA=="
+   },
+   "Metadata": {
+    "aws:cdk:path": "appsync-amplify-cdk-next-prod-Stack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "GraphQLAPIURL": {
+   "Value": {
+    "Fn::GetAtt": [
+     "appsyncamplifycdknextprod7D817F5B",
+     "GraphQLUrl"
+    ]
+   }
+  },
+  "GraphQLAPIID": {
+   "Value": {
+    "Fn::GetAtt": [
+     "appsyncamplifycdknextprod7D817F5B",
+     "ApiId"
+    ]
+   }
+  },
+  "UserPoolId": {
+   "Value": {
+    "Ref": "appsyncamplifycdknextproduserpool459BB37C"
+   }
+  },
+  "UserPoolClientId": {
+   "Value": {
+    "Ref": "appsyncamplifycdknextproduserpoolClientE3A5C5D1"
+   }
+  },
+  "IdentityPoolId": {
+   "Value": {
+    "Ref": "appsyncamplifycdknextprodidentityPool77099B93"
+   }
+  },
+  "Region": {
+   "Value": "us-east-1"
+  },
+  "AmplifyAppId": {
+   "Value": {
+    "Fn::GetAtt": [
+     "appsyncamplifycdknextprodhosting3E234B6C",
+     "AppId"
+    ]
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}
