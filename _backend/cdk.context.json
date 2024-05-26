@@ -14,7 +14,7 @@
       "region": "us-east-1"
     }
   },
-  "develop": {
+  "dev": {
     "stage": "dev",
     "env": {
       "account": "654654404647",
