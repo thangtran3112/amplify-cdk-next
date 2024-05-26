@@ -1,0 +1,24 @@
+{
+  "globals": {
+    "appName": "appsync-amplify-cdk-next",
+    "hosting": {
+      "ghTokenName": "github-token",
+      "ghOwner": "thangtran3112",
+      "repo": "appsync-amplify-cdk-next"
+    }
+  },
+  "main": {
+    "stage": "prod",
+    "env": {
+      "account": "654654404647",
+      "region": "us-east-1"
+    }
+  },
+  "develop": {
+    "stage": "dev",
+    "env": {
+      "account": "654654404647",
+      "region": "us-east-1"
+    }
+  }
+}
